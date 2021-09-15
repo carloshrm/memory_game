@@ -124,7 +124,7 @@ function App() {
       {gameOver || playerScore.current === animeList.length ? (
         <GameOver scores={playerScore} didLose={gameOver} />
       ) : (
-        <GameBoard currentScore={playerScore.current} total={animeList.length}>
+        <GameBoard scores={playerScore} total={animeList.length}>
           {animeList.map((entry, i) => (
             <Card
               key={i}
