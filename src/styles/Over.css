@@ -1,0 +1,8 @@
+#game_over {
+  height: 100vh;
+}
+#game_over h2 {
+  font-size: 4em;
+  padding: 2rem;
+  color: red;
+}
