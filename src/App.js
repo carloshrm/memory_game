@@ -37,7 +37,6 @@ function App() {
     let [year, season] = checkSeason();
     const fetchAnime = await fetch(`https://api.jikan.moe/v3/season/${year}/${season}`);
     const animeData = await fetchAnime.json();
-    console.error("!! >> FETCHED");
     return animeData;
   }
 
@@ -47,6 +46,7 @@ function App() {
     setRawData(response.anime);
     localStorage.setItem("rawData", JSON.stringify(response.anime));
     localStorage.setItem("dataAge", JSON.stringify(Date.now()));
+    shuffleArray(filteredData);
     setAnimeList(filteredData.slice(0, Math.floor(filteredData.length / difficulty)));
   }
 
