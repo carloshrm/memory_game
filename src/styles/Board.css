@@ -1,0 +1,14 @@
+.game_board {
+  display: flex;
+  max-width: 80vw;
+  margin: auto;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+.game_header {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  padding: 0.2rem;
+}

@@ -1,0 +1,11 @@
+.ind_card {
+  width: 20%;
+  border: 2px solid black;
+  border-radius: 10%;
+  padding: 1.5em;
+  margin: 1rem;
+  text-align: center;
+  font-weight: bold;
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.274);
+  background-color: white;
+}

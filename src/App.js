@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import "./styles/App.css";
 import Card from "./components/Card";
+import GameOver from "./components/GameOver";
+import GameBoard from "./components/GameBoard";
 
 function App() {
   const [rawData, setRawData] = useState([]);
   const [animeList, setAnimeList] = useState([]);
-  const [playerScore, setPlayerScore] = useState(0);
-  const [difficulty, setDifficulty] = useState(12);
+  const [playerScore, setPlayerScore] = useState({ current: 0, highest: 0 });
+  const [difficulty, setDifficulty] = useState(10);
   const [gameOver, setGameOver] = useState(false);
 
   useEffect(() => {
@@ -43,8 +45,9 @@ function App() {
     const response = await fetchFromAPI();
     const filteredData = setupList(response.anime);
     setRawData(response.anime);
-    localStorage.setItem("rawData", JSON.stringify(rawData));
-    setAnimeList(filteredData.slice(0, difficulty));
+    localStorage.setItem("rawData", JSON.stringify(response.anime));
+    localStorage.setItem("dataAge", JSON.stringify(Date.now()));
+    setAnimeList(filteredData.slice(0, Math.floor(filteredData.length / difficulty)));
   }
 
   function setupList(unfilteredData) {
@@ -65,7 +68,13 @@ function App() {
     if (animeList[id].clicked) {
       setGameOver(true);
     } else {
-      setPlayerScore(playerScore + 1);
+      setPlayerScore({
+        current: playerScore.current + 1,
+        highest:
+          playerScore.current + 1 > playerScore.highest
+            ? playerScore.current + 1
+            : playerScore.highest,
+      });
       let updatedList = [...animeList];
       updatedList[id].clicked = true;
       shuffleArray(updatedList);
@@ -83,32 +92,58 @@ function App() {
   }
 
   function resetGame() {
-    setPlayerScore(0);
-    let freshList = setupList(rawData);
-    shuffleArray(freshList);
-    setAnimeList(freshList.slice(0, difficulty));
+    setPlayerScore({ current: 0, highest: playerScore.highest });
+    setGameOver(false);
+    if (
+      localStorage.getItem("rawData") === [] ||
+      Date.now() - localStorage.getItem("dataAge") > 86400 * 1000
+    ) {
+      setData();
+    } else {
+      let freshList = setupList(rawData);
+      shuffleArray(freshList);
+      setAnimeList(freshList.slice(0, Math.floor(freshList.length / difficulty)));
+    }
   }
 
   return (
     <div className="App">
-      <div>
-        <h1>{playerScore}</h1>
-        <button onClick={resetGame}>Reset</button>
-      </div>
-      <div>
-        {animeList.map(
-          (entry, i) =>
-            i < 10 && (
-              <Card
-                key={i}
-                id={i}
-                name={entry.title}
-                image={entry.coverImage}
-                clickHandler={clickHandler}
-              />
-            )
-        )}
-      </div>
+      <header>
+        <h2>Anime Memory Game!</h2>
+        <div>
+          <label htmlFor="diff">Power Level:</label>
+          <select name="diff" onChange={(e) => setDifficulty(e.target.value)}>
+            <option value="10">Normie</option>
+            <option value="8">Seen AOT</option>
+            <option value="6">Seasonal</option>
+            <option value="2">８０００以上だ！</option>
+          </select>
+          <button onClick={resetGame}>Reset/Refresh</button>
+        </div>
+      </header>
+      {gameOver || playerScore.current === animeList.length ? (
+        <GameOver scores={playerScore} didLose={gameOver} />
+      ) : (
+        <GameBoard currentScore={playerScore.current} total={animeList.length}>
+          {animeList.map((entry, i) => (
+            <Card
+              key={i}
+              id={i}
+              name={entry.title}
+              image={entry.coverImage}
+              clickHandler={clickHandler}
+            />
+          ))}
+        </GameBoard>
+      )}
+      <footer>
+        <p>Made By Carlos Moraes, 2021.</p>
+        <a href="https://github.com/carloshrm/memory_game">Source on Github.</a>
+        <p>
+          Seasonal anime data from MyAnimeList.net through{" "}
+          <a href="https://jikan.moe">Jikan API.</a>{" "}
+        </p>
+      </footer>
     </div>
   );
 }
