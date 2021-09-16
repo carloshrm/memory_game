@@ -47,7 +47,7 @@ function App() {
     localStorage.setItem("rawData", JSON.stringify(response.anime));
     localStorage.setItem("dataAge", JSON.stringify(Date.now()));
     shuffleArray(filteredData);
-    setAnimeList(filteredData.slice(0, Math.floor(filteredData.length / difficulty)));
+    setAnimeList(filteredData.slice(0, difficulty));
   }
 
   function setupList(unfilteredData) {
@@ -102,7 +102,7 @@ function App() {
     } else {
       let freshList = setupList(rawData);
       shuffleArray(freshList);
-      setAnimeList(freshList.slice(0, Math.floor(freshList.length / difficulty)));
+      setAnimeList(freshList.slice(0, difficulty));
     }
   }
 
@@ -114,9 +114,9 @@ function App() {
           <label htmlFor="diff">Power Level:</label>
           <select name="diff" onChange={(e) => setDifficulty(e.target.value)}>
             <option value="10">Normie</option>
-            <option value="8">Seen AOT</option>
-            <option value="6">Seasonal</option>
-            <option value="2">８０００以上だ！</option>
+            <option value="12">Seen AOT</option>
+            <option value="16">Seasonal</option>
+            <option value="20">８０００以上だ！</option>
           </select>
           <button onClick={resetGame}>Reset/Refresh</button>
         </div>
